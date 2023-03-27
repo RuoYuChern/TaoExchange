@@ -1,5 +1,5 @@
 @ECHO OFF
-SET BIN_DIR="..\\3rdp\\grpc\\bin"
+SET BIN_DIR="..\\3rdp\\protoc-osx\\bin"
 SET CPP_I_DIR="..\\facade\\include"
 SET CPP_SRC_DIR="..\\facade\\src"
 SET protoc=%BIN_DIR%\\protoc.exe
