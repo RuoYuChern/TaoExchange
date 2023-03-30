@@ -83,3 +83,10 @@ type OrderResp struct {
 	Market string   `json:"market"`
 	Order  OrderDto `json:"order"`
 }
+
+func makeQueryRsp(status int, msg string) *QueryResp {
+	rsp := new(QueryResp)
+	rsp.Status = status
+	rsp.Msg = msg
+	return rsp
+}

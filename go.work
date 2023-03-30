@@ -6,6 +6,7 @@ use (
 	./coordinator
 	./exchange
 	./gate
+	./grpc
 	./highStore
 	./marketdata
 )
