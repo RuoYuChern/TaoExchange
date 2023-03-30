@@ -1,0 +1,11 @@
+go 1.20
+
+use (
+	./
+	./common
+	./coordinator
+	./exchange
+	./gate
+	./highStore
+	./marketdata
+)

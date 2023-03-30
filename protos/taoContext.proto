@@ -47,7 +47,7 @@ message OrderReplyDto{
   OrderCmd commond = 3;
   int64 filled = 4;
   int64 left = 5;
-  int64 free = 6;
+  int64 fee = 6;
 }
 
 message MarketDto{
