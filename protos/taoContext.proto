@@ -4,51 +4,59 @@ option go_package = "/grpc";
 package grpc;
 
 enum OrderType{
-  GTC = 0;
-  IOC = 1;
-  IOC_BUDGET = 2;
-  FOK = 3;
-  FOK_BUDGET = 4;
+  OT_GTC = 0;
+  OT_IOC = 1;
+  OT_IOC_BUDGET = 2;
+  OT_FOK = 3;
+  OT_FOK_BUDGET = 4;
+  OT_UNKNOW = 5;
 }
 
 enum OrderSid{
-  OFFER = 0;
-  BID = 1;
+  SD_OFFER = 0;
+  SD_BID = 1;
+  SD_UNKNOW = 2;
 }
 
 enum OrderCmd{
-  PLACE = 0;
-  MOVE = 1;
-  CANCEL = 2;
-  REDUCE = 3;
-  REJECT = 4;
-  ACCEPT = 5;
+  CMD_PLACE = 0;
+  CMD_MOVE = 1;
+  CMD_CANCEL = 2;
+  CMD_REDUCE = 3;
+  CMD_UNKNOW = 4;
+}
+
+enum OrderStatus{
+	ST_INITIAL = 0;
+	ST_ACCEPT  = 1;
+	ST_REJECT  = 2;
+	ST_CANCEL  = 3;
+	ST_FINISH  = 4; 
+  ST_UNKNOW = 5;   
 }
 
 message OrderDto{
   string id = 1;
   OrderType type = 2;
   OrderSid side = 3;
-  OrderCmd commond = 4;
+  OrderStatus status = 4;
   int32 version = 5;
   int64 timestamp = 6;
   int64 price = 7;
   int64 reserveBidPrice = 8;
   int64 amount = 9;
+  int64 filled = 10;
   int64 takerFee = 11;
   int64 makerFee = 12;
-  string market = 13; 
-  string userId = 14;
-  string source =15;
+  int64 fee = 13;
+  string market = 14; 
+  string userId = 15;
+  string source =16;
 }
 
 message OrderReplyDto{
   string replyId = 1;
   OrderDto order = 2;
-  OrderCmd commond = 3;
-  int64 filled = 4;
-  int64 left = 5;
-  int64 fee = 6;
 }
 
 message MarketDto{
@@ -78,6 +86,7 @@ message OrderReq{
   string userId = 1;
   string market = 2;
   OrderDto order = 3;
+  OrderCmd cmd = 4;
 }
 
 message OrderRsp{

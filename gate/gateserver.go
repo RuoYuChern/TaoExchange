@@ -31,18 +31,26 @@ func queryUserMarketOrder(c *gin.Context) {
 	if common.IsBlank(req.Market) && common.IsBlank(req.UserId) {
 		slog.Info("market or userId is empty")
 		rsp := makeQueryRsp(http.StatusBadRequest, "Bad args")
-		c.IndentedJSON(http.StatusBadRequest, rsp)
+		c.JSON(http.StatusBadRequest, rsp)
+		return
+	}
+	exRouter := getRouter()
+	rsp := exRouter.query(req)
+	c.JSON(http.StatusOK, rsp)
+	slog.Info("OK")
+}
+
+func placeMarketOrder(c *gin.Context) {
+	var order OrderReq
+	if err := c.BindJSON(&order); err != nil {
+		rsp := makeOrderResp(http.StatusBadRequest, "args error", "", "")
+		c.JSON(http.StatusBadRequest, rsp)
 		return
 	}
 
-	rsp := makeQueryRsp(http.StatusOK, "OK")
-	rsp.Orders = make([]OrderDto, 0, 1)
-	order := new(OrderDto)
-	order.Id = "123456"
-	order.Commond = CMD_PLACE
-	order.Price = 12345
-	rsp.Orders = append(rsp.Orders, *order)
-	c.IndentedJSON(http.StatusOK, rsp)
+	exRouter := getRouter()
+	rsp := exRouter.placeOrder(&order)
+	c.JSON(http.StatusOK, rsp)
 	slog.Info("OK")
 }
 
@@ -58,6 +66,7 @@ func makeRoute(r *gin.Engine) {
 	r.GET("/", home)
 	r.GET("/hello", hello)
 	r.GET("/order/query-user-market", queryUserMarketOrder)
+	r.POST("/order/cmd/place-market-order", placeMarketOrder)
 }
 
 func StartGateService() {
@@ -74,6 +83,13 @@ func StartGateService() {
 		Handler: router,
 	}
 
+	// 进行grpc 连接
+	exRouter := getRouter()
+	if err := exRouter.connect(); err != nil {
+		slog.Error("connect to exchange error:", err)
+		return
+	}
+
 	// Initializing the server
 	go func() {
 		/**进行连接**/
@@ -86,12 +102,12 @@ func StartGateService() {
 	<-ctx.Done()
 
 	stop()
-
 	slog.Info("Shutdown Server ...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		slog.Warn("Server shutdown:", err)
 	}
+	exRouter.shutdown()
 	slog.Info("Server exist")
 }

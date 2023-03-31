@@ -1,5 +1,9 @@
 package gate
 
+import (
+	"container/list"
+)
+
 type OrderType string
 
 const (
@@ -26,7 +30,6 @@ const (
 	CMD_MOVE   = "MOVE"
 	CMD_CANCEL = "CANCEL"
 	CMD_REDUCE = "REDUCE"
-	CMD_QUERY  = "QUERY"
 	UN_CMD     = "UNCMD"
 )
 
@@ -44,20 +47,19 @@ type OrderDto struct {
 	Id              string      `json:"id"`
 	OdType          OrderType   `json:"type"`
 	Side            OrderSid    `json:"side"`
-	Commond         OrderCmd    `json:"commond"`
 	Status          OrderStatus `json:"status"`
-	Price           uint64      `json:"price"`
-	ReserveBidPrice uint64      `json:"reserveBidPrice"`
-	Amount          uint64      `json:"amount"`
-	Filled          uint64      `json:"filled"`
-	TakerFee        uint64      `json:"takerFee"`
-	MakerFee        uint64      `json:"makerFee"`
-	Fee             uint64      `json:"fee"`
+	Price           int64       `json:"price"`
+	ReserveBidPrice int64       `json:"reserveBidPrice"`
+	Amount          int64       `json:"amount"`
+	Filled          int64       `json:"filled"`
+	TakerFee        int64       `json:"takerFee"`
+	MakerFee        int64       `json:"makerFee"`
+	Fee             int64       `json:"fee"`
 	Market          string      `json:"market"`
 	UserId          string      `json:"userId"`
 	Source          string      `json:"source"`
-	Version         int         `json:"version"`
-	Timestamp       uint64      `json:"timestamp"`
+	Version         int32       `json:"version"`
+	Timestamp       int64       `json:"timestamp"`
 }
 
 type QueryReq struct {
@@ -67,26 +69,38 @@ type QueryReq struct {
 }
 
 type QueryResp struct {
-	Status int        `json:"status"`
+	Status int32      `json:"status"`
 	Msg    string     `json:"msg"`
-	Orders []OrderDto `json:"orders"`
+	Orders *list.List `json:"orders"`
 }
 
 type OrderReq struct {
-	UserId string   `json:"userId"`
-	Market string   `json:"market"`
-	Order  OrderDto `json:"order"`
+	UserId  string   `json:"userId"`
+	Market  string   `json:"market"`
+	Order   OrderDto `json:"order"`
+	Commond OrderCmd `json:"commond"`
 }
 
 type OrderResp struct {
+	Status int32    `json:"status"`
+	Msg    string   `json:"msg"`
 	UserId string   `json:"userId"`
 	Market string   `json:"market"`
 	Order  OrderDto `json:"order"`
 }
 
-func makeQueryRsp(status int, msg string) *QueryResp {
+func makeQueryRsp(status int32, msg string) *QueryResp {
 	rsp := new(QueryResp)
 	rsp.Status = status
 	rsp.Msg = msg
+	return rsp
+}
+
+func makeOrderResp(status int32, msg, userId, market string) *OrderResp {
+	rsp := new(OrderResp)
+	rsp.Status = status
+	rsp.Msg = msg
+	rsp.Market = market
+	rsp.UserId = userId
 	return rsp
 }
