@@ -11,3 +11,25 @@ service TaoExchangeSrv{
     rpc queryOrder(QueryReq) returns (QueryRsp){}
     rpc doOrderCommond(OrderReq) returns (OrderRsp){}
 }
+
+service TaoHighStoreSrv{
+	rpc saveCommond(OrderReq) returns (CommonRsp){}
+	rpc batchGet(BatchGetReq) returns (BatchGetRsp){}
+}
+
+service TaoMarketDataSrv{
+	rpc batchGet(BatchGetReq) returns (BatchGetRsp){}
+	rpc queryOrder(QueryReq) returns (QueryRsp){}
+}
+
+service TaoCoordinatorSrv{
+	rpc listShards(CommonReq) returns (LockShardRsp) {}
+	rpc lockShard(ShardReq) returns (LockShardRsp) {}
+	rpc unlockShard(ShardReq) returns (CommonRsp) {}
+	rpc listConnectorInfo(CommonReq) returns (ListConnectorRsp) {}
+	rpc keepLive(ShardReq) returns (CommonRsp) {}
+}
+
+service TaoAdapterSrv{
+	rpc doOrderCommond(OrderReq) returns (OrderRsp){}
+}

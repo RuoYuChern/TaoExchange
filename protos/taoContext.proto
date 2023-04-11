@@ -32,7 +32,7 @@ enum OrderStatus{
 	ST_REJECT  = 2;
 	ST_CANCEL  = 3;
 	ST_FINISH  = 4; 
-  ST_UNKNOW = 5;   
+    ST_UNKNOW = 5;   
 }
 
 message OrderDto{
@@ -93,4 +93,70 @@ message OrderRsp{
   int32 status = 1;
   string msg = 2;
   OrderReplyDto order = 3;
+}
+
+
+message CommonReq{
+  string msgId = 1;
+}
+
+message CommonRsp{
+  int32 status = 1;
+  string msg = 2;
+}
+
+message BatchGetReq{
+  int32  offset = 1;
+  string market = 2;
+}
+
+message BatchGetRsp{
+  int32 status = 1;
+  string msg = 2;
+  repeated OrderDto orderList = 3;  
+}
+
+message MarketShardDto{
+	string shardId = 1;
+	repeated string marketList = 2;
+}
+
+message ShardListRsp{
+	int32 status = 1;
+	string msg = 2;
+	repeated string shardList = 3;
+}
+
+enum ShardRole{
+	ROLE_MARKET = 0;
+	ROLE_STORE  = 1;
+}
+
+message ShardReq{
+	string shardId = 1;
+	string appId = 2;
+	string ip = 3;
+	int32 port = 4;
+	ShardRole role = 5;
+}
+
+message LockShardRsp{
+	int32 status = 1;
+	string msg = 2;
+	MarketShardDto marketList = 3;
+}
+
+message ConnectorDto{
+    string shardId = 1;
+	string appId = 2;
+	string ip = 3;
+	int32 port = 4;
+	int32 status = 5;
+	ShardRole role = 6;
+}
+
+message ListConnectorRsp{
+	int32 status = 1;
+	string msg = 2;
+	ConnectorDto connectorList = 3;
 }
