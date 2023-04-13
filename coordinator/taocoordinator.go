@@ -54,12 +54,14 @@ func StartTaoCoordinator() {
 	pb.RegisterTaoCoordinatorSrvServer(s, &server{})
 
 	go func() {
-		slog.Info("Server listening at:", lis.Addr())
+		slog.Info("Server listening at:", lis.Addr().String())
 		if err := s.Serve(lis); err != nil {
 			slog.Error("Failed to server:", err)
 			return
 		}
 	}()
+
+	startTaoCoordinatorRest()
 
 	//Listen for the interrupt signal
 	<-ctx.Done()
@@ -68,5 +70,6 @@ func StartTaoCoordinator() {
 	_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	s.GracefulStop()
+	graceFulStop(&ctx)
 	slog.Info("Server exist")
 }

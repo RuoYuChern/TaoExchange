@@ -4,6 +4,14 @@ import (
 	"time"
 
 	"github.com/uptrace/bun"
+	"golang.org/x/exp/slog"
+	"tao.exchange.com/common"
+)
+
+const (
+	FREE_ST      = 0
+	LOCK_ST      = 1
+	UN_HEALTH_ST = 2
 )
 
 type TaoLock struct {
@@ -18,4 +26,17 @@ type TaoLock struct {
 	LockTime      time.Time `bun:"lockTime,notnull,default:current_timestamp"`
 }
 
-//func (tlk *TaoLock)insert()
+type TaoLockMapper struct {
+}
+
+func (tlm *TaoLockMapper) Insert(tlk *TaoLock) int32 {
+	db, ctx := common.GetDbCon().GetDb()
+	_, err := db.NewInsert().Model(tlk).Column("shardId", "appId", "appIp", "appRole", "appPort", "appStatus", "lockTime").
+		On("CONFLICT (shardId) DO UPDATE").Set("appId = EXCLUDED.appId").Where("appStatus == 0").Exec(*ctx)
+	if err != nil {
+		slog.Info("")
+		return -1
+	}
+
+	return 1
+}
