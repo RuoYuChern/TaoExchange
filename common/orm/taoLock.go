@@ -17,24 +17,56 @@ const (
 type TaoLock struct {
 	bun.BaseModel `bun:"table:tao_lock"`
 	Id            int32     `bun:"id,autoincrement"`
-	ShardId       string    `bun:"shardId,pk"`
-	AppId         string    `bun:"appId,notnull"`
-	AppIP         string    `bun:"appIP,notnull"`
-	AppRole       string    `bun:"appRole,notnull"`
-	AppPort       int32     `bun:"appPort,notnull"`
-	AppStatus     int32     `bun:"appStatus,notnull"`
-	LockTime      time.Time `bun:"lockTime,notnull,default:current_timestamp"`
+	ShardId       string    `bun:"shardid,pk"`
+	AppId         string    `bun:"appid,notnull"`
+	AppIP         string    `bun:"appip,notnull"`
+	AppRole       string    `bun:"approle,notnull"`
+	AppPort       int32     `bun:"appport,notnull"`
+	AppStatus     int32     `bun:"appstatus,notnull"`
+	LockTime      time.Time `bun:"locktime,notnull,default:current_timestamp"`
 }
 
 type TaoLockMapper struct {
 }
 
+func (tlm *TaoLockMapper) BatchSelect() ([]TaoLock, error) {
+	db, ctx := common.GetDbCon().GetDb()
+	tlockList := make([]TaoLock, 0)
+	err := db.NewRaw("SELECT id,marketid,shardid,appid,appip,approle,appport,appstatus FROM ? WHERE appstatus = ?",
+		bun.Ident("tao_lock"), LOCK_ST).Scan(*ctx, &tlockList)
+	if err != nil {
+		slog.Info("BatchSelect:", err.Error())
+		return nil, err
+	}
+	return tlockList, nil
+
+}
+
+func (tlm *TaoLockMapper) ReleaseLock(tlk *TaoLock) int32 {
+	db, ctx := common.GetDbCon().GetDb()
+	r, err := db.NewUpdate().Model(tlk).Column("appstatus", "locktime").Where("shardid = ?", tlk.ShardId).Where("appstatus = ?", LOCK_ST).
+		Where("appid = ?", tlk.AppId).Exec(*ctx)
+	if err != nil {
+		slog.Info("ReleaseLock error:", err.Error())
+		return -1
+	}
+
+	v, err := r.RowsAffected()
+	if err != nil {
+		slog.Info("ReleaseLock error:", err.Error())
+		return -1
+	}
+	return int32(v)
+}
+
 func (tlm *TaoLockMapper) Insert(tlk *TaoLock) int32 {
 	db, ctx := common.GetDbCon().GetDb()
-	_, err := db.NewInsert().Model(tlk).Column("shardId", "appId", "appIp", "appRole", "appPort", "appStatus", "lockTime").
-		On("CONFLICT (shardId) DO UPDATE").Set("appId = EXCLUDED.appId").Where("appStatus == 0").Exec(*ctx)
+	_, err := db.NewInsert().Model(tlk).On("CONFLICT (shardId) DO UPDATE").Set("appid = EXCLUDED.appid").
+		Set("appip = EXCLUDED.appip").Set("approle = EXCLUDED.approle").
+		Set("appport = EXCLUDED.appport").Set("appstatus = EXCLUDED.appstatus").Set("locktime = EXCLUDED.locktime").
+		Where("appStatus == 0").Exec(*ctx)
 	if err != nil {
-		slog.Info("")
+		slog.Info("Insert error:", err.Error())
 		return -1
 	}
 

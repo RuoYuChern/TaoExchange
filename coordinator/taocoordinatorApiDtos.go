@@ -9,8 +9,9 @@ type coordinatorRsp struct {
 }
 
 type taoShardMarketDto struct {
-	MarketId string `json:"marketId"`
-	ShardId  string `json:"shardId"`
+	MarketId   string `json:"marketId"`
+	ShardId    string `json:"shardId"`
+	UpdateTime string `json:"updateTime"`
 }
 
 type taoAddShardMarkeReq struct {
@@ -25,6 +26,7 @@ type taoLockDto struct {
 	AppRole   string `json:"appRole"`
 	AppPort   int32  `json:"appPort"`
 	AppStatus int32  `json:"appStatus"`
+	LockTime  string `json:"lockTime"`
 }
 
 type taoLockReq struct {
