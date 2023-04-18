@@ -19,15 +19,15 @@ func Get() *infraMgr {
 	return mgr
 }
 
-func (m *infraMgr) Add(c *AutoCloseable) {
+func (m *infraMgr) Add(c AutoCloseable) {
 	m.list.PushBack(c)
 }
 
 func (m *infraMgr) Close() {
 	for c := m.list.Front(); c != nil; c = c.Next() {
-		p, ok := (c.Value).(*AutoCloseable)
-		if ok {
-			(*p).AutoClose()
+		if c != nil {
+			ac := c.Value.(AutoCloseable)
+			ac.AutoClose()
 		}
 	}
 }

@@ -53,7 +53,7 @@ func (s *server) ListShards(ctx context.Context, req *pb.CommonReq) (*pb.LockSha
 	return rsp, nil
 }
 func (s *server) LockShard(ctx context.Context, req *pb.ShardReq) (*pb.LockShardRsp, error) {
-	
+
 	return nil, nil
 }
 func (s *server) UnlockShard(ctx context.Context, req *pb.ShardReq) (*pb.CommonRsp, error) {
@@ -108,5 +108,6 @@ func StartTaoCoordinator() {
 	defer cancel()
 	s.GracefulStop()
 	graceFulStop(&ctx)
+	common.Get().Close()
 	slog.Info("Server exist")
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"sync"
-	"unsafe"
 
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
@@ -33,7 +32,7 @@ func (dbCon *DbConnector) Connect(dsn string, ctx *context.Context) error {
 	dbCon.db = bun.NewDB(sqlDb, pgdialect.New())
 	dbCon.ctx = ctx
 	slog.Info("connect to:{} success", dsn)
-	Get().Add((*AutoCloseable)(unsafe.Pointer(dbCon)))
+	Get().Add(dbCon)
 	return nil
 }
 

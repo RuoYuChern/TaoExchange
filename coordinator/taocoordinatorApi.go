@@ -299,7 +299,7 @@ func startTaoCoordinatorRest() {
 	slog.Info("Listen on:8090 ...")
 	go func() {
 		if err := httpSrv.Serve(httpLn); err != nil {
-			slog.Error("listen error:", err)
+			slog.Error("listen error:", err.Error())
 		}
 	}()
 }
