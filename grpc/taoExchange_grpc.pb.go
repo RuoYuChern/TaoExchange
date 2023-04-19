@@ -411,8 +411,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TaoCoordinatorSrvClient interface {
-	ListShards(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*LockShardRsp, error)
-	LockShard(ctx context.Context, in *ShardReq, opts ...grpc.CallOption) (*LockShardRsp, error)
+	ListShards(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ShardListRsp, error)
+	LockShard(ctx context.Context, in *ShardReq, opts ...grpc.CallOption) (*CommonRsp, error)
 	UnlockShard(ctx context.Context, in *ShardReq, opts ...grpc.CallOption) (*CommonRsp, error)
 	ListConnectorInfo(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ListConnectorRsp, error)
 	KeepLive(ctx context.Context, in *ShardReq, opts ...grpc.CallOption) (*CommonRsp, error)
@@ -426,8 +426,8 @@ func NewTaoCoordinatorSrvClient(cc grpc.ClientConnInterface) TaoCoordinatorSrvCl
 	return &taoCoordinatorSrvClient{cc}
 }
 
-func (c *taoCoordinatorSrvClient) ListShards(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*LockShardRsp, error) {
-	out := new(LockShardRsp)
+func (c *taoCoordinatorSrvClient) ListShards(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ShardListRsp, error) {
+	out := new(ShardListRsp)
 	err := c.cc.Invoke(ctx, TaoCoordinatorSrv_ListShards_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -435,8 +435,8 @@ func (c *taoCoordinatorSrvClient) ListShards(ctx context.Context, in *CommonReq,
 	return out, nil
 }
 
-func (c *taoCoordinatorSrvClient) LockShard(ctx context.Context, in *ShardReq, opts ...grpc.CallOption) (*LockShardRsp, error) {
-	out := new(LockShardRsp)
+func (c *taoCoordinatorSrvClient) LockShard(ctx context.Context, in *ShardReq, opts ...grpc.CallOption) (*CommonRsp, error) {
+	out := new(CommonRsp)
 	err := c.cc.Invoke(ctx, TaoCoordinatorSrv_LockShard_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -475,8 +475,8 @@ func (c *taoCoordinatorSrvClient) KeepLive(ctx context.Context, in *ShardReq, op
 // All implementations must embed UnimplementedTaoCoordinatorSrvServer
 // for forward compatibility
 type TaoCoordinatorSrvServer interface {
-	ListShards(context.Context, *CommonReq) (*LockShardRsp, error)
-	LockShard(context.Context, *ShardReq) (*LockShardRsp, error)
+	ListShards(context.Context, *CommonReq) (*ShardListRsp, error)
+	LockShard(context.Context, *ShardReq) (*CommonRsp, error)
 	UnlockShard(context.Context, *ShardReq) (*CommonRsp, error)
 	ListConnectorInfo(context.Context, *CommonReq) (*ListConnectorRsp, error)
 	KeepLive(context.Context, *ShardReq) (*CommonRsp, error)
@@ -487,10 +487,10 @@ type TaoCoordinatorSrvServer interface {
 type UnimplementedTaoCoordinatorSrvServer struct {
 }
 
-func (UnimplementedTaoCoordinatorSrvServer) ListShards(context.Context, *CommonReq) (*LockShardRsp, error) {
+func (UnimplementedTaoCoordinatorSrvServer) ListShards(context.Context, *CommonReq) (*ShardListRsp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListShards not implemented")
 }
-func (UnimplementedTaoCoordinatorSrvServer) LockShard(context.Context, *ShardReq) (*LockShardRsp, error) {
+func (UnimplementedTaoCoordinatorSrvServer) LockShard(context.Context, *ShardReq) (*CommonRsp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LockShard not implemented")
 }
 func (UnimplementedTaoCoordinatorSrvServer) UnlockShard(context.Context, *ShardReq) (*CommonRsp, error) {

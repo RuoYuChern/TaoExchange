@@ -39,3 +39,10 @@ func (dbCon *DbConnector) Connect(dsn string, ctx *context.Context) error {
 func (dbCon *DbConnector) GetDb() (*bun.DB, *context.Context) {
 	return dbCon.db, dbCon.ctx
 }
+
+func (dbCon *DbConnector) AutoClose() {
+	if dbCon.db != nil {
+		slog.Info("DbConnector close")
+		dbCon.db.Close()
+	}
+}

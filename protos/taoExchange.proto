@@ -23,8 +23,8 @@ service TaoMarketDataSrv{
 }
 
 service TaoCoordinatorSrv{
-	rpc listShards(CommonReq) returns (LockShardRsp) {}
-	rpc lockShard(ShardReq) returns (LockShardRsp) {}
+	rpc listShards(CommonReq) returns (ShardListRsp) {}
+	rpc lockShard(ShardReq) returns (CommonRsp) {}
 	rpc unlockShard(ShardReq) returns (CommonRsp) {}
 	rpc listConnectorInfo(CommonReq) returns (ListConnectorRsp) {}
 	rpc keepLive(ShardReq) returns (CommonRsp) {}

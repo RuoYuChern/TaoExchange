@@ -32,7 +32,7 @@ type TaoLockMapper struct {
 func (tlm *TaoLockMapper) BatchSelect() ([]TaoLock, error) {
 	db, ctx := common.GetDbCon().GetDb()
 	tlockList := make([]TaoLock, 0)
-	err := db.NewRaw("SELECT id,marketid,shardid,appid,appip,approle,appport,appstatus FROM ? WHERE appstatus = ?",
+	err := db.NewRaw("SELECT id,shardid,appid,appip,approle,appport,appstatus FROM ? WHERE appstatus = ?",
 		bun.Ident("tao_lock"), LOCK_ST).Scan(*ctx, &tlockList)
 	if err != nil {
 		slog.Info("BatchSelect:", err.Error())
@@ -61,7 +61,7 @@ func (tlm *TaoLockMapper) ReleaseLock(tlk *TaoLock) int32 {
 
 func (tlm *TaoLockMapper) Insert(tlk *TaoLock) int32 {
 	db, ctx := common.GetDbCon().GetDb()
-	_, err := db.NewInsert().Model(tlk).On("CONFLICT (shardId) DO UPDATE").Set("appid = EXCLUDED.appid").
+	r, err := db.NewInsert().Model(tlk).On("CONFLICT (shardId) DO UPDATE").Set("appid = EXCLUDED.appid").
 		Set("appip = EXCLUDED.appip").Set("approle = EXCLUDED.approle").
 		Set("appport = EXCLUDED.appport").Set("appstatus = EXCLUDED.appstatus").Set("locktime = EXCLUDED.locktime").
 		Where("appStatus == 0").Exec(*ctx)
@@ -69,6 +69,11 @@ func (tlm *TaoLockMapper) Insert(tlk *TaoLock) int32 {
 		slog.Info("Insert error:", err.Error())
 		return -1
 	}
+	v, err := r.RowsAffected()
+	if err != nil {
+		slog.Info("ReleaseLock error:", err.Error())
+		return -1
+	}
+	return int32(v)
 
-	return 1
 }

@@ -124,12 +124,12 @@ message MarketShardDto{
 message ShardListRsp{
 	int32 status = 1;
 	string msg = 2;
-	repeated string shardList = 3;
+	map<string,MarketShardDto> marketList = 3;
 }
 
 enum ShardRole{
-	ROLE_MARKET = 0;
-	ROLE_STORE  = 1;
+	SR_MARKET = 0;
+	SR_STORE  = 1;
 }
 
 message ShardReq{
@@ -138,12 +138,6 @@ message ShardReq{
 	string ip = 3;
 	int32 port = 4;
 	ShardRole role = 5;
-}
-
-message LockShardRsp{
-	int32 status = 1;
-	string msg = 2;
-	map<string,MarketShardDto> marketList = 3;
 }
 
 message ConnectorDto{
@@ -158,5 +152,5 @@ message ConnectorDto{
 message ListConnectorRsp{
 	int32 status = 1;
 	string msg = 2;
-	ConnectorDto connectorList = 3;
+	map<string,ConnectorDto> connectorList = 3;
 }

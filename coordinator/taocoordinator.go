@@ -21,10 +21,10 @@ type server struct {
 	pb.UnimplementedTaoCoordinatorSrvServer
 }
 
-func (s *server) ListShards(ctx context.Context, req *pb.CommonReq) (*pb.LockShardRsp, error) {
+func (s *server) ListShards(ctx context.Context, req *pb.CommonReq) (*pb.ShardListRsp, error) {
 	tlkm := orm.TaoShardMarketMapper{}
 	id := int32(0)
-	rsp := new(pb.LockShardRsp)
+	rsp := new(pb.ShardListRsp)
 	rsp.Status = http.StatusOK
 	rsp.Msg = "OK"
 	rsp.MarketList = make(map[string]*pb.MarketShardDto)
@@ -52,18 +52,104 @@ func (s *server) ListShards(ctx context.Context, req *pb.CommonReq) (*pb.LockSha
 	}
 	return rsp, nil
 }
-func (s *server) LockShard(ctx context.Context, req *pb.ShardReq) (*pb.LockShardRsp, error) {
+func (s *server) LockShard(ctx context.Context, req *pb.ShardReq) (*pb.CommonRsp, error) {
+	rsp := new(pb.CommonRsp)
+	rsp.Status = http.StatusOK
+	rsp.Msg = "OK"
+	if common.IsBlank(req.AppId) || common.IsBlank(req.Ip) || common.IsBlank(req.ShardId) {
+		rsp.Status = http.StatusBadRequest
+		rsp.Msg = "BadRequest"
+		return rsp, nil
+	}
+	tlkm := orm.TaoLockMapper{}
+	tlk := orm.TaoLock{
+		ShardId:   req.ShardId,
+		AppId:     req.AppId,
+		AppIP:     req.Ip,
+		AppRole:   pb.ShardRole_name[int32(req.Role)],
+		AppPort:   req.Port,
+		AppStatus: orm.LOCK_ST,
+		LockTime:  time.Now(),
+	}
 
-	return nil, nil
+	r := tlkm.Insert(&tlk)
+	if r < 0 {
+		rsp.Status = http.StatusInternalServerError
+		rsp.Msg = "Internal Server Error"
+		return rsp, nil
+	}
+
+	if r == 0 {
+		rsp.Status = http.StatusNotAcceptable
+		rsp.Msg = "Not Acceptable"
+		return rsp, nil
+	}
+	getSs().lockShard(&tlk)
+	return rsp, nil
 }
 func (s *server) UnlockShard(ctx context.Context, req *pb.ShardReq) (*pb.CommonRsp, error) {
-	return nil, nil
+	rsp := new(pb.CommonRsp)
+	rsp.Status = http.StatusOK
+	rsp.Msg = "OK"
+
+	if common.IsBlank(req.AppId) || common.IsBlank(req.Ip) || common.IsBlank(req.ShardId) {
+		rsp.Status = http.StatusBadRequest
+		rsp.Msg = "BadRequest"
+		return rsp, nil
+	}
+
+	tlk := orm.TaoLock{
+		ShardId:   req.ShardId,
+		AppId:     req.AppId,
+		AppIP:     req.Ip,
+		AppRole:   pb.ShardRole_name[int32(req.Role)],
+		AppPort:   req.Port,
+		AppStatus: orm.FREE_ST,
+		LockTime:  time.Now(),
+	}
+
+	r := getSs().checkLock(tlk.ShardId)
+	if !r {
+		rsp.Status = http.StatusNotAcceptable
+		rsp.Msg = "Not Acceptable"
+		return rsp, nil
+	}
+
+	tlkm := orm.TaoLockMapper{}
+	r2 := tlkm.ReleaseLock(&tlk)
+	if r2 > 0 {
+		getSs().unlock(&tlk)
+	} else {
+		rsp.Status = http.StatusNotAcceptable
+		rsp.Msg = "Not Acceptable"
+	}
+	return rsp, nil
 }
 func (s *server) ListConnectorInfo(ctx context.Context, req *pb.CommonReq) (*pb.ListConnectorRsp, error) {
-	return nil, nil
+	rsp := new(pb.ListConnectorRsp)
+	rsp.Status = http.StatusOK
+	rsp.Msg = "OK"
+
+	conMap := getSs().getConnectorList()
+	if len(conMap) == 0 {
+		rsp.Status = http.StatusNotFound
+		rsp.Msg = "Not Found"
+		return rsp, nil
+
+	}
+	rsp.ConnectorList = conMap
+	return rsp, nil
 }
 func (s *server) KeepLive(ctx context.Context, req *pb.ShardReq) (*pb.CommonRsp, error) {
-	return nil, nil
+	rsp := new(pb.CommonRsp)
+	rsp.Status = http.StatusOK
+	rsp.Msg = "OK"
+	r := getSs().keepLive(req)
+	if !r {
+		rsp.Status = http.StatusNotAcceptable
+		rsp.Msg = "Not Acceptable"
+	}
+	return rsp, nil
 }
 
 var (
@@ -79,6 +165,8 @@ func StartTaoCoordinator() {
 	dsn := "postgres://taiji:TaiJiTrading2022@@localhost:5432/taoexchange?sslmode=disable"
 	db := common.GetDbCon()
 	db.Connect(dsn, &ctx)
+	// load lock info
+	getSs().int()
 
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
@@ -99,7 +187,6 @@ func StartTaoCoordinator() {
 	}()
 
 	startTaoCoordinatorRest()
-
 	//Listen for the interrupt signal
 	<-ctx.Done()
 	stop()
