@@ -68,34 +68,11 @@ func (blk *BrokerClient) Connect(dsn string) error {
 	}
 	blk.cord = pb.NewTaoCoordinatorSrvClient(conn)
 	blk.cordCon = conn
-
-	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
-	defer cancel()
-	req := &pb.CommonReq{MsgId: fmt.Sprintf("msgId-%d", time.Now().UnixMilli())}
-	rsp, err := blk.cord.ListConnectorInfo(ctx, req)
-	if err != nil {
-		slog.Warn("Connect error:", err.Error())
+	err = blk.getBrokerClient()
+	if err != nil{
+		slog.Warn("Get broker error:", err.Error())
 		return err
 	}
-
-	if rsp.Status != http.StatusOK {
-		slog.Warn("Connect error:", err.Error())
-		return errors.New(rsp.Msg)
-	}
-
-	dto, ok := rsp.ConnectorList[common.MsqQMaster]
-	if !ok {
-		slog.Warn("broker is not exist")
-		return errors.New("broker is not exist")
-	}
-	blk.brkConDto = dto
-	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", dto.Ip, dto.Port))
-	if err != nil {
-		slog.Warn("Connect to broker error:", err.Error())
-		return err
-	}
-	blk.brkCon = conn
-	blk.brk = pb.NewTaoBrokerClient(conn)
 	/**注册自己**/
 	common.Get().Add(blk)
 	/**刷新线程**/
@@ -117,6 +94,45 @@ func (blk *BrokerClient) reset() {
 	}
 }
 
+func (blk *BrokerClient) getBrokerClient() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	defer cancel()
+	req := &pb.CommonReq{MsgId: fmt.Sprintf("msgId-%d", time.Now().UnixMilli())}
+	rsp, err := blk.cord.ListConnectorInfo(ctx, req)
+	if err != nil {
+		slog.Warn("Connect error:", err.Error())
+		return err
+	}
+
+	if rsp.Status != http.StatusOK {
+		slog.Warn("Connect error:", err.Error())
+		return err
+	}
+
+	dto, ok := rsp.ConnectorList[common.MsqQMaster]
+	if !ok {
+		slog.Warn("broker is not exist")
+		return errors.New("broker is not exist")
+	}
+
+	if (blk.brkConDto != nil) && (dto.AppId == blk.brkConDto.AppId) {
+		return nil
+	}
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", dto.Ip, dto.Port))
+	if err != nil {
+		slog.Warn("Connect to broker error:", err.Error())
+	}
+
+	blk.reset()
+	blk.brkCon = conn
+	blk.brk = pb.NewTaoBrokerClient(conn)
+	if blk.brkConDto != nil {
+		slog.Info(fmt.Sprintf("Update broker ip: %s %s, port: %d, %d", blk.brkConDto.Ip, dto.Ip, blk.brkConDto.Port, dto.Port))
+	}
+	blk.brkConDto = dto
+	return nil
+}
+
 func (blk *BrokerClient) checkUpdate() {
 	for {
 		if blk.stop {
@@ -124,39 +140,6 @@ func (blk *BrokerClient) checkUpdate() {
 			break
 		}
 		time.Sleep(1500 * time.Millisecond)
-		ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
-		defer cancel()
-		req := &pb.CommonReq{MsgId: fmt.Sprintf("msgId-%d", time.Now().UnixMilli())}
-		rsp, err := blk.cord.ListConnectorInfo(ctx, req)
-		if err != nil {
-			slog.Warn("Connect error:", err.Error())
-			continue
-		}
-
-		if rsp.Status != http.StatusOK {
-			slog.Warn("Connect error:", err.Error())
-			continue
-		}
-
-		dto, ok := rsp.ConnectorList[common.MsqQMaster]
-		if !ok {
-			slog.Warn("broker is not exist")
-			continue
-		}
-
-		if dto.AppId == blk.brkConDto.AppId {
-			continue
-		}
-
-		conn, err := grpc.Dial(fmt.Sprintf("%s:%d", dto.Ip, dto.Port))
-		if err != nil {
-			slog.Warn("Connect to broker error:", err.Error())
-		}
-
-		blk.reset()
-		blk.brkCon = conn
-		blk.brk = pb.NewTaoBrokerClient(conn)
-		slog.Info(fmt.Sprintf("Update broker ip: %s %s, port: %d, %d", blk.brkConDto.Ip, dto.Ip, blk.brkConDto.Port, dto.Port))
-		blk.brkConDto = dto
+		blk.getBrokerClient()
 	}
 }
