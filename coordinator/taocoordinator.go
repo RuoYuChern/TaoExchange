@@ -162,9 +162,10 @@ func StartTaoCoordinator() {
 	defer stop()
 
 	// 启动DB 连接
-	dsn := "postgres://taiji:TaiJiTrading2022@@localhost:5432/taoexchange?sslmode=disable"
+	taoConf := common.TaoConf{}
+	taoConf.LoadTaoConf("../tao_conf.yaml")
 	db := common.GetDbCon()
-	db.Connect(dsn, &ctx)
+	db.Connect(taoConf.DbDns, &ctx)
 	// load lock info
 	getSs().int()
 
