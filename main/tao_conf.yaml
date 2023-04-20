@@ -1,2 +1,0 @@
-tao_infra_dns: "postgres://taiji:TaiJiTrading2022@@localhost:5432/taoexchange?sslmode=disable"
-tao_coordiantor_url: 127.0.0.1:59081
