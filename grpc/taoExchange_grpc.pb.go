@@ -405,6 +405,7 @@ const (
 	TaoCoordinatorSrv_UnlockShard_FullMethodName       = "/grpc.TaoCoordinatorSrv/unlockShard"
 	TaoCoordinatorSrv_ListConnectorInfo_FullMethodName = "/grpc.TaoCoordinatorSrv/listConnectorInfo"
 	TaoCoordinatorSrv_KeepLive_FullMethodName          = "/grpc.TaoCoordinatorSrv/keepLive"
+	TaoCoordinatorSrv_ListTaoMarket_FullMethodName     = "/grpc.TaoCoordinatorSrv/listTaoMarket"
 )
 
 // TaoCoordinatorSrvClient is the client API for TaoCoordinatorSrv service.
@@ -416,6 +417,7 @@ type TaoCoordinatorSrvClient interface {
 	UnlockShard(ctx context.Context, in *ShardReq, opts ...grpc.CallOption) (*CommonRsp, error)
 	ListConnectorInfo(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ListConnectorRsp, error)
 	KeepLive(ctx context.Context, in *ShardReq, opts ...grpc.CallOption) (*CommonRsp, error)
+	ListTaoMarket(ctx context.Context, in *ListTaoMarketReq, opts ...grpc.CallOption) (*ListTaoMarketRsp, error)
 }
 
 type taoCoordinatorSrvClient struct {
@@ -471,6 +473,15 @@ func (c *taoCoordinatorSrvClient) KeepLive(ctx context.Context, in *ShardReq, op
 	return out, nil
 }
 
+func (c *taoCoordinatorSrvClient) ListTaoMarket(ctx context.Context, in *ListTaoMarketReq, opts ...grpc.CallOption) (*ListTaoMarketRsp, error) {
+	out := new(ListTaoMarketRsp)
+	err := c.cc.Invoke(ctx, TaoCoordinatorSrv_ListTaoMarket_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaoCoordinatorSrvServer is the server API for TaoCoordinatorSrv service.
 // All implementations must embed UnimplementedTaoCoordinatorSrvServer
 // for forward compatibility
@@ -480,6 +491,7 @@ type TaoCoordinatorSrvServer interface {
 	UnlockShard(context.Context, *ShardReq) (*CommonRsp, error)
 	ListConnectorInfo(context.Context, *CommonReq) (*ListConnectorRsp, error)
 	KeepLive(context.Context, *ShardReq) (*CommonRsp, error)
+	ListTaoMarket(context.Context, *ListTaoMarketReq) (*ListTaoMarketRsp, error)
 	mustEmbedUnimplementedTaoCoordinatorSrvServer()
 }
 
@@ -501,6 +513,9 @@ func (UnimplementedTaoCoordinatorSrvServer) ListConnectorInfo(context.Context, *
 }
 func (UnimplementedTaoCoordinatorSrvServer) KeepLive(context.Context, *ShardReq) (*CommonRsp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method KeepLive not implemented")
+}
+func (UnimplementedTaoCoordinatorSrvServer) ListTaoMarket(context.Context, *ListTaoMarketReq) (*ListTaoMarketRsp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTaoMarket not implemented")
 }
 func (UnimplementedTaoCoordinatorSrvServer) mustEmbedUnimplementedTaoCoordinatorSrvServer() {}
 
@@ -605,6 +620,24 @@ func _TaoCoordinatorSrv_KeepLive_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TaoCoordinatorSrv_ListTaoMarket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTaoMarketReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaoCoordinatorSrvServer).ListTaoMarket(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TaoCoordinatorSrv_ListTaoMarket_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaoCoordinatorSrvServer).ListTaoMarket(ctx, req.(*ListTaoMarketReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TaoCoordinatorSrv_ServiceDesc is the grpc.ServiceDesc for TaoCoordinatorSrv service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -631,6 +664,10 @@ var TaoCoordinatorSrv_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "keepLive",
 			Handler:    _TaoCoordinatorSrv_KeepLive_Handler,
+		},
+		{
+			MethodName: "listTaoMarket",
+			Handler:    _TaoCoordinatorSrv_ListTaoMarket_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -117,19 +117,20 @@ message BatchGetRsp{
 }
 
 message MarketShardDto{
-	string shardId = 1;
-	repeated string marketList = 2;
+  string shardId = 1;
+  repeated string marketList = 2;
 }
 
 message ShardListRsp{
-	int32 status = 1;
-	string msg = 2;
-	map<string,MarketShardDto> marketList = 3;
+  int32 status = 1;
+  string msg = 2;
+  map<string,MarketShardDto> marketList = 3;
 }
 
 enum ShardRole{
-	SR_MARKET = 0;
-	SR_STORE  = 1;
+  SR_MARKET = 0;
+  SR_STORE  = 1;
+  SR_MQ = 2;
 }
 
 message ShardReq{
@@ -141,16 +142,27 @@ message ShardReq{
 }
 
 message ConnectorDto{
-    string shardId = 1;
-	string appId = 2;
-	string ip = 3;
-	int32 port = 4;
-	int32 status = 5;
-	ShardRole role = 6;
+  string shardId = 1;
+  string appId = 2;
+  string ip = 3;
+  int32 port = 4;
+  int32 status = 5;
+  ShardRole role = 6;
 }
 
 message ListConnectorRsp{
-	int32 status = 1;
-	string msg = 2;
-	map<string,ConnectorDto> connectorList = 3;
+  int32 status = 1;
+  string msg = 2;
+  map<string,ConnectorDto> connectorList = 3;
+}
+
+
+message ListTaoMarketReq{
+  int64 startId = 1;
+}
+
+message ListTaoMarketRsp{
+  int32 status = 1;
+  string msg = 2;
+  repeated MarketDto marketList = 3;  
 }

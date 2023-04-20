@@ -140,6 +140,7 @@ func (s *server) ListConnectorInfo(ctx context.Context, req *pb.CommonReq) (*pb.
 	rsp.ConnectorList = conMap
 	return rsp, nil
 }
+
 func (s *server) KeepLive(ctx context.Context, req *pb.ShardReq) (*pb.CommonRsp, error) {
 	rsp := new(pb.CommonRsp)
 	rsp.Status = http.StatusOK
@@ -149,6 +150,13 @@ func (s *server) KeepLive(ctx context.Context, req *pb.ShardReq) (*pb.CommonRsp,
 		rsp.Status = http.StatusNotAcceptable
 		rsp.Msg = "Not Acceptable"
 	}
+	return rsp, nil
+}
+
+func (s *server) ListTaoMarket(ctx context.Context, req *pb.ListTaoMarketReq) (*pb.ListTaoMarketRsp, error) {
+	rsp := new(pb.ListTaoMarketRsp)
+	rsp.Status = http.StatusOK
+	rsp.Msg = "OK"
 	return rsp, nil
 }
 

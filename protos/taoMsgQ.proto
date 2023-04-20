@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package grpc;
+option go_package = "/grpc";
+option java_multiple_files = true;
+option java_package = "tao.exchange.com.grpc";
+
+enum TaoMsgCmd{
+	MSG_TOPIC_C = 0;
+	MSG_TOPIC_D = 1; 
+	MSG_SLAVE_A = 2;
+}
+
+enum TaoCode{
+    TC_OK = 0;
+	TC_PUB_ERR = 1000;
+	TC_BRK_ERR = 1001;
+	TC_BRK_SLAVE_ERR = 1002;
+	TC_SUB_ERR = 1003;
+	TC_BRK_ROLE_ERR = 1004;
+}
+
+message TaoMsgCmdReq{
+	TaoMsgCmd cmd = 1;
+	string cmdId = 2;
+	bytes data = 3;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+}
+
+message TaoMsgCmdRsp{
+	string cmdId = 1;
+	int32 code = 2;
+	string msg = 3;
+}
+
+message TaoMsgReq{
+	string msgId = 1;
+	string topic = 2;
+	bytes data = 3; 
+	int64 timeStamp = 4;
+	int64 brkId = 5;
+	map<string,bytes> headers = 6;
+}
+
+message TaoMsgRsp{
+	string msgId = 1;
+	int64 brkId = 2;
+	int32 code = 3;
+	string msg = 4;	
+}
+
+message TaoSubReq{
+	string topic = 1;
+	string groupId = 2;
+}
+
+message TaoMsgConAdr{
+    int32 port = 2;
+    string ip = 1;
+	string brkId = 3;
+}
+
+service TaoBroker{
+	rpc cmd(TaoMsgCmdReq) returns (TaoMsgCmdRsp){}
+	rpc pub(TaoMsgReq) returns (TaoMsgRsp){}
+	rpc sync(TaoMsgReq) returns (TaoMsgRsp){}
+	rpc sub(TaoSubReq) returns (stream TaoMsgReq){}
+}
