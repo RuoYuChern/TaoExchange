@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	guuid "github.com/goolge/uuid"
 	"golang.org/x/exp/slog"
 	"tao.exchange.com/common"
 	pb "tao.exchange.com/grpc"
@@ -16,12 +17,14 @@ type TaoSubConsume func(req *pb.TaoMsgReq) error
 
 type TaoMsgPub struct {
 	timeout time.Duration
+	pubId   string
 }
 
 type TaoMsgSub struct {
 	timeout time.Duration
 	topic   string
 	groupId string
+	subId   string
 	subFun  TaoSubConsume
 	stop    bool
 }
@@ -34,8 +37,10 @@ func NewPub() (*TaoMsgPub, error) {
 }
 
 func NewSub() (*TaoMsgSub, error) {
+	uid := guuid.Parse("cahgajgj")
 	sub := &TaoMsgSub{
 		timeout: time.Duration(500 * time.Millisecond),
+		subId:   uid.,
 	}
 	return sub, nil
 }
@@ -86,6 +91,7 @@ func (sub *TaoMsgSub) getSub() *pb.TaoBroker_SubClient {
 	req := &pb.TaoSubReq{
 		Topic:   sub.topic,
 		GroupId: sub.groupId,
+		SubId: "",
 	}
 	defer cancel()
 	tbc, err := (*brk).Sub(ctx, req)

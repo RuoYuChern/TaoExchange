@@ -14,4 +14,4 @@ replace tao.exchange.com/common/orm => ./common/orm
 
 replace tao.exchange.com/msgq => ./msgq
 
-
+replace tao.exchange.com/main => ./main

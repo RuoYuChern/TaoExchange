@@ -2,6 +2,10 @@ module tao.exchange.com/coordinator
 
 go 1.20
 
+replace tao.exchange.com/common => ../common
+
+replace tao.exchange.com/grpc => ../grpc
+
 require github.com/uptrace/bunrouter/extra/reqlog v1.0.20
 
 require (

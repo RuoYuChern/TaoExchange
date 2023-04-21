@@ -2,6 +2,10 @@ module tao.exchange.com/exchange
 
 go 1.20
 
+replace tao.exchange.com/common => ../common
+
+replace tao.exchange.com/grpc => ../grpc
+
 require google.golang.org/grpc v1.54.0
 
 require (

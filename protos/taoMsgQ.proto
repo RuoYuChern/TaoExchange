@@ -36,10 +36,11 @@ message TaoMsgCmdRsp{
 message TaoMsgReq{
 	string msgId = 1;
 	string topic = 2;
-	bytes data = 3; 
-	int64 timeStamp = 4;
-	int64 brkId = 5;
-	map<string,bytes> headers = 6;
+	string pubId = 3;
+	bytes data = 4; 
+	int64 timeStamp = 5;
+	int64 brkId = 6;
+	map<string,bytes> headers = 7;
 }
 
 message TaoMsgRsp{
@@ -52,6 +53,7 @@ message TaoMsgRsp{
 message TaoSubReq{
 	string topic = 1;
 	string groupId = 2;
+	string subId = 3;
 }
 
 message TaoMsgConAdr{
@@ -63,8 +65,8 @@ message TaoMsgConAdr{
 message TaoMsgConsumeInfo{
 	string topic = 1;
 	string groupId = 2;
-	offset int64 = 3;
-	brkId  int64 = 4;
+	int64 offset  = 3;
+	int64 brkId = 4;
 }
 
 service TaoBroker{

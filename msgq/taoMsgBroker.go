@@ -2,23 +2,69 @@ package msgq
 
 import (
 	"context"
+	"fmt"
+	"net"
 	"os/signal"
 	"syscall"
+	"time"
 
+	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"tao.exchange.com/common"
 	pb "tao.exchange.com/grpc"
 )
 
+type taoSubCon struct {
+	subCon *grpc.ClientConn
+	subSvr pb.TaoBroker_SubServer
+}
+
+type taoSubMeta struct {
+	topic   string
+	groupId string
+	offset  int64
+	
+}
+
 type taoBroker struct {
 	common.AutoCloseable
 	pb.UnimplementedTaoBrokerServer
-	cord    pb.TaoCoordinatorSrvClient
-	cordCon *grpc.ClientConn
+	cord     pb.TaoCoordinatorSrvClient
+	cordCon  *grpc.ClientConn
+	isMaster bool
+	stop     bool
 }
 
-func (brk *taoBroker) start(){
+func (brk *taoBroker) start(conf *common.TaoConf) {
+	taoConf := *conf
+	brk.stop = false
+	brk.isMaster = false
+	err := brk.getCoordinator(taoConf.CoordinatorUrl)
+	if err != nil {
+		slog.Error("")
+		panic(err.Error())
+	}
+}
 
+func (brk *taoBroker) AutoClose() {
+	brk.stop = false
+	if brk.cordCon != nil {
+		brk.cordCon.Close()
+	}
+}
+
+func (brk *taoBroker) getCoordinator(dsn string) error {
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(dsn, opts...)
+	if err != nil {
+		slog.Warn("Connect to coordinator error:", err.Error())
+		return err
+	}
+	brk.cordCon = conn
+	brk.cord = pb.NewTaoCoordinatorSrvClient(conn)
+	return nil
 }
 
 func (brk *taoBroker) Cmd(context.Context, *pb.TaoMsgCmdReq) (*pb.TaoMsgCmdRsp, error) {
@@ -42,10 +88,30 @@ func StartBroker() {
 	taoConf := common.TaoConf{}
 	taoConf.LoadTaoConf("../tao_conf.yaml")
 	tbk := taoBroker{}
-	tbk.start()
-	
+	tbk.start(&taoConf)
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", taoConf.BrokerPort))
+	if err != nil {
+		slog.Error("Failed to listen:", err)
+		return
+	}
+
+	s := grpc.NewServer()
+	pb.RegisterTaoBrokerServer(s, &tbk)
+	go func() {
+		slog.Info("Server listening at:", lis.Addr().String())
+		if err := s.Serve(lis); err != nil {
+			slog.Error("Failed to server:", err)
+			return
+		}
+	}()
 	<-ctx.Done()
+	_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	s.GracefulStop()
+
 	stop()
 	/**资源释放**/
 	common.Get().Close()
+	slog.Info("Server exist")
 }

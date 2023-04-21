@@ -2,6 +2,10 @@ module tao.exchange.com/gate
 
 go 1.20
 
+replace tao.exchange.com/common => ../common
+
+replace tao.exchange.com/grpc => ../grpc
+
 require github.com/gin-gonic/gin v1.9.0
 
 require (
