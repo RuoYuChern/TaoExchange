@@ -2,6 +2,7 @@ package gate
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os/signal"
 	"syscall"
@@ -78,8 +79,11 @@ func StartGateService() {
 	router.Use(gateFilter())
 	router.Use(gin.Recovery())
 	makeRoute(router)
+	taoConf := common.TaoConf{}
+	taoConf.LoadTaoConf("../tao_conf.yaml")
+
 	srv := &http.Server{
-		Addr:    ":8080",
+		Addr:    fmt.Sprintf(":%d", taoConf.GateRestPort),
 		Handler: router,
 	}
 

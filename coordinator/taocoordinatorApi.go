@@ -270,7 +270,7 @@ func listTaoMarket(w http.ResponseWriter, req bunrouter.Request) error {
 
 var httpSrv *http.Server
 
-func startTaoCoordinatorRest() {
+func startTaoCoordinatorRest(port int32) {
 	router := bunrouter.New(
 		bunrouter.Use(reqlog.NewMiddleware(reqlog.FromEnv("bundebug"))),
 	)
@@ -282,7 +282,8 @@ func startTaoCoordinatorRest() {
 	router.GET("/q/lock/list-tao-lock", listTaoLock)
 	router.GET("/q/market/list-tao-market", listTaoMarket)
 
-	httpLn, err := net.Listen("tcp", ":8090")
+	url := fmt.Sprintf(":%d", port)
+	httpLn, err := net.Listen("tcp", url)
 	if err != nil {
 		panic(err)
 	}
@@ -296,7 +297,7 @@ func startTaoCoordinatorRest() {
 		Handler:      handler,
 	}
 
-	slog.Info("Listen on:8090 ...")
+	slog.Info("Listen on:", url)
 	go func() {
 		if err := httpSrv.Serve(httpLn); err != nil {
 			slog.Error("listen error:", err.Error())

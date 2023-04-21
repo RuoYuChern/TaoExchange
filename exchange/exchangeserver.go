@@ -2,7 +2,6 @@ package exchange
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"net"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 
 	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"
+	"tao.exchange.com/common"
 	pb "tao.exchange.com/grpc"
 )
 
@@ -31,17 +31,15 @@ func (s *server) DoOrderCommond(ctx context.Context, in *pb.OrderReq) (*pb.Order
 	return &pb.OrderRsp{Status: http.StatusNotImplemented, Msg: "Not supported"}, nil
 }
 
-var (
-	port = flag.Int("port", 58081, "The server port")
-)
-
 func StartTaoExchange() {
 	// create context that listens for the interrupt signal from the OS
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	taoConf := common.TaoConf{}
+	taoConf.LoadTaoConf("../tao_conf.yaml")
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", taoConf.ExchangePort))
 	if err != nil {
 		slog.Error("Failed to listen:", err)
 		return

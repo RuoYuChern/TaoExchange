@@ -9,6 +9,7 @@ enum TaoMsgCmd{
 	MSG_TOPIC_C = 0;
 	MSG_TOPIC_D = 1; 
 	MSG_SLAVE_A = 2;
+	MSG_CONSUME_SYC = 3;
 }
 
 enum TaoCode{
@@ -57,6 +58,13 @@ message TaoMsgConAdr{
     int32 port = 2;
     string ip = 1;
 	string brkId = 3;
+}
+
+message TaoMsgConsumeInfo{
+	string topic = 1;
+	string groupId = 2;
+	offset int64 = 3;
+	brkId  int64 = 4;
 }
 
 service TaoBroker{

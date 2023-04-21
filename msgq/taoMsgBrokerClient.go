@@ -49,7 +49,7 @@ func (blk *BrokerClient) AutoClose() {
 	}
 }
 
-func (blk *BrokerClient) GetBroker() *pb.TaoBrokerClient {
+func (blk *BrokerClient) GetGrpcBroker() *pb.TaoBrokerClient {
 	if blk.brk == nil {
 		slog.Error("broker is nil")
 		return nil
@@ -68,8 +68,8 @@ func (blk *BrokerClient) Connect(dsn string) error {
 	}
 	blk.cord = pb.NewTaoCoordinatorSrvClient(conn)
 	blk.cordCon = conn
-	err = blk.getBrokerClient()
-	if err != nil{
+	err = blk.setGrpcBrokerClient()
+	if err != nil {
 		slog.Warn("Get broker error:", err.Error())
 		return err
 	}
@@ -94,7 +94,7 @@ func (blk *BrokerClient) reset() {
 	}
 }
 
-func (blk *BrokerClient) getBrokerClient() error {
+func (blk *BrokerClient) setGrpcBrokerClient() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 	defer cancel()
 	req := &pb.CommonReq{MsgId: fmt.Sprintf("msgId-%d", time.Now().UnixMilli())}
@@ -140,6 +140,6 @@ func (blk *BrokerClient) checkUpdate() {
 			break
 		}
 		time.Sleep(1500 * time.Millisecond)
-		blk.getBrokerClient()
+		blk.setGrpcBrokerClient()
 	}
 }

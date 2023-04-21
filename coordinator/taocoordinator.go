@@ -2,7 +2,6 @@ package coordinator
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"net"
 	"net/http"
@@ -160,10 +159,6 @@ func (s *server) ListTaoMarket(ctx context.Context, req *pb.ListTaoMarketReq) (*
 	return rsp, nil
 }
 
-var (
-	port = flag.Int("port", 59081, "The server port")
-)
-
 func StartTaoCoordinator() {
 	// create context that listens for the interrupt signal from the OS
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -177,8 +172,7 @@ func StartTaoCoordinator() {
 	// load lock info
 	getSs().int()
 
-	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", taoConf.CoordinatorPort))
 	if err != nil {
 		slog.Error("Failed to listen:", err)
 		return
@@ -195,7 +189,7 @@ func StartTaoCoordinator() {
 		}
 	}()
 
-	startTaoCoordinatorRest()
+	startTaoCoordinatorRest(taoConf.CoordinatorRestPort)
 	//Listen for the interrupt signal
 	<-ctx.Done()
 	stop()
