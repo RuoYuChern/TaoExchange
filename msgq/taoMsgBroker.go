@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/google/uuid"
 	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -23,6 +24,7 @@ type taoSubCon struct {
 type taoSubMeta struct {
 	topic   string
 	groupId string
+	subId   string 
 	offset  int64
 	
 }
@@ -30,6 +32,7 @@ type taoSubMeta struct {
 type taoBroker struct {
 	common.AutoCloseable
 	pb.UnimplementedTaoBrokerServer
+	appId    string 
 	cord     pb.TaoCoordinatorSrvClient
 	cordCon  *grpc.ClientConn
 	isMaster bool
@@ -40,11 +43,15 @@ func (brk *taoBroker) start(conf *common.TaoConf) {
 	taoConf := *conf
 	brk.stop = false
 	brk.isMaster = false
+	brk.appId = uuid.NewString()
 	err := brk.getCoordinator(taoConf.CoordinatorUrl)
 	if err != nil {
-		slog.Error("")
+		slog.Error("get coordinator failed")
 		panic(err.Error())
 	}
+	go func(){
+		brk.watch(conf.BrokerPort)
+	}()
 }
 
 func (brk *taoBroker) AutoClose() {
@@ -52,6 +59,13 @@ func (brk *taoBroker) AutoClose() {
 	if brk.cordCon != nil {
 		brk.cordCon.Close()
 	}
+}
+
+func (brk *taoBroker)watch(port int32){
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	defer cancel()
+	req := &pb.ShardReq{ShardId:common.MsqQMaster, AppId:brk.appId, Ip:"", Port:port,Role:pb.ShardRole_SR_MQ}
+	brk.cord.LockShard(ctx, req)
 }
 
 func (brk *taoBroker) getCoordinator(dsn string) error {

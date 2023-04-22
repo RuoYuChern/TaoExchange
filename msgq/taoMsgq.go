@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	guuid "github.com/goolge/uuid"
+	"github.com/google/uuid"
 	"golang.org/x/exp/slog"
 	"tao.exchange.com/common"
 	pb "tao.exchange.com/grpc"
@@ -32,15 +32,15 @@ type TaoMsgSub struct {
 func NewPub() (*TaoMsgPub, error) {
 	pub := &TaoMsgPub{
 		timeout: time.Duration(500 * time.Millisecond),
+		pubId: uuid.NewString(),
 	}
 	return pub, nil
 }
 
 func NewSub() (*TaoMsgSub, error) {
-	uid := guuid.Parse("cahgajgj")
 	sub := &TaoMsgSub{
 		timeout: time.Duration(500 * time.Millisecond),
-		subId:   uid.,
+		subId:   uuid.NewString(),
 	}
 	return sub, nil
 }
@@ -91,7 +91,7 @@ func (sub *TaoMsgSub) getSub() *pb.TaoBroker_SubClient {
 	req := &pb.TaoSubReq{
 		Topic:   sub.topic,
 		GroupId: sub.groupId,
-		SubId: "",
+		SubId: sub.subId,
 	}
 	defer cancel()
 	tbc, err := (*brk).Sub(ctx, req)
