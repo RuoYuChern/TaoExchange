@@ -1,0 +1,13 @@
+tao:
+  coordiantor_url: 127.0.0.1:59081
+  market_data_port: 54081
+  adapter_port: 55081
+  store_port: 56081
+  broker_port: 57081
+  exchange_port: 58081
+  coordiantor_port: 59081
+  gate_restport: 8080
+  coordiantor_restport: 8090
+  broker_dir: "../broker_data"
+infra:
+  db_dns: "postgres://user:pwd@localhost:5432/taoexchange?sslmode=disable"

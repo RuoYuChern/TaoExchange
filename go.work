@@ -1,14 +1,14 @@
 go 1.20
 
 use (
-	./
-	./common
-	./coordinator
-	./exchange
-	./gate
-	./grpc
-	./highStore
-	./main
-	./marketdata
-	./msgq
+	.
+	common
+	infra
+	coordinator/service
+	grpc
+	infra/orm
+	exchange/service
+	gate/service
+	msgq/api
+	msgq/broker
 )

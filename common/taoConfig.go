@@ -7,21 +7,29 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type TaoConf struct {
-	DbDns               string `yaml:"tao_infra_dns"`
-	CoordinatorUrl      string `yaml:"tao_coordiantor_url"`
-	CoordinatorPort     int32  `yaml:"tao_coordiantor_port"`
-	CoordinatorRestPort int32  `yaml:"tao_coordiantor_restport"`
-	GateRestPort        int32  `yaml:"tao_gate_restport"`
-	ExchangePort        int32  `yaml:"tao_exchange_port"`
-	StorePort           int32  `yaml:"tao_store_port"`
-	AdapterPort         int32  `yaml:"tao_adapter_port"`
-	MarketDataPort      int32  `yaml:"tao_market_data_port"`
-	BrokerPort          int32  `yaml:"tao_broker_port"`
-	BrokerDirPath       string `yaml:"tao_broker_dir"`
+type taoConf struct {
+	CoordinatorUrl      string `yaml:"coordiantor_url"`
+	CoordinatorPort     int32  `yaml:"coordiantor_port"`
+	CoordinatorRestPort int32  `yaml:"coordiantor_restport"`
+	GateRestPort        int32  `yaml:"gate_restport"`
+	ExchangePort        int32  `yaml:"exchange_port"`
+	StorePort           int32  `yaml:"store_port"`
+	AdapterPort         int32  `yaml:"adapter_port"`
+	MarketDataPort      int32  `yaml:"market_data_port"`
+	BrokerPort          int32  `yaml:"broker_port"`
+	BrokerDirPath       string `yaml:"broker_dir"`
 }
 
-func (c *TaoConf) LoadTaoConf(path string) {
+type infraConf struct {
+	DbDns string `yaml:"db_dns"`
+}
+
+type TaoAppConf struct {
+	Tao   taoConf   `yaml:"tao"`
+	Infra infraConf `yaml:"infra"`
+}
+
+func (c *TaoAppConf) LoadTaoConf(path string) {
 	ymlFile, err := os.ReadFile(path)
 	if err != nil {
 		slog.Error("Can not load file:", path, ", error:", err.Error())
@@ -33,5 +41,6 @@ func (c *TaoConf) LoadTaoConf(path string) {
 		slog.Error("unmarshal failed: ", err.Error())
 		panic(err)
 	}
-	slog.Info("DbDns:", c.DbDns, ",CoordinatorUrl: ", c.CoordinatorUrl)
+	slog.Info("DbDns:", c.Infra.DbDns)
+	slog.Info("CoordinatorUrl: ", c.Tao.CoordinatorUrl)
 }

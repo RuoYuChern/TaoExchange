@@ -1,3 +1,3 @@
-module tao.exchange.com/marketdata
+module marketData
 
 go 1.20

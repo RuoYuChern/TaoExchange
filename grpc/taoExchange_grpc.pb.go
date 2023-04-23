@@ -23,7 +23,7 @@ const (
 	TaoExchangeSrv_DoOrderCommond_FullMethodName = "/grpc.TaoExchangeSrv/doOrderCommond"
 )
 
-// TaoExchangeSrvClient is the client API for TaoExchangeSrv service.
+// TaoExchangeSrvClient is the client API for TaoExchangeSrv api.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TaoExchangeSrvClient interface {
@@ -57,7 +57,7 @@ func (c *taoExchangeSrvClient) DoOrderCommond(ctx context.Context, in *OrderReq,
 	return out, nil
 }
 
-// TaoExchangeSrvServer is the server API for TaoExchangeSrv service.
+// TaoExchangeSrvServer is the server API for TaoExchangeSrv api.
 // All implementations must embed UnimplementedTaoExchangeSrvServer
 // for forward compatibility
 type TaoExchangeSrvServer interface {
@@ -78,7 +78,7 @@ func (UnimplementedTaoExchangeSrvServer) DoOrderCommond(context.Context, *OrderR
 }
 func (UnimplementedTaoExchangeSrvServer) mustEmbedUnimplementedTaoExchangeSrvServer() {}
 
-// UnsafeTaoExchangeSrvServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeTaoExchangeSrvServer may be embedded to opt out of forward compatibility for this api.
 // Use of this interface is not recommended, as added methods to TaoExchangeSrvServer will
 // result in compilation errors.
 type UnsafeTaoExchangeSrvServer interface {
@@ -125,7 +125,7 @@ func _TaoExchangeSrv_DoOrderCommond_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-// TaoExchangeSrv_ServiceDesc is the grpc.ServiceDesc for TaoExchangeSrv service.
+// TaoExchangeSrv_ServiceDesc is the grpc.ServiceDesc for TaoExchangeSrv api.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TaoExchangeSrv_ServiceDesc = grpc.ServiceDesc{
@@ -150,7 +150,7 @@ const (
 	TaoHighStoreSrv_BatchGet_FullMethodName    = "/grpc.TaoHighStoreSrv/batchGet"
 )
 
-// TaoHighStoreSrvClient is the client API for TaoHighStoreSrv service.
+// TaoHighStoreSrvClient is the client API for TaoHighStoreSrv api.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TaoHighStoreSrvClient interface {
@@ -184,7 +184,7 @@ func (c *taoHighStoreSrvClient) BatchGet(ctx context.Context, in *BatchGetReq, o
 	return out, nil
 }
 
-// TaoHighStoreSrvServer is the server API for TaoHighStoreSrv service.
+// TaoHighStoreSrvServer is the server API for TaoHighStoreSrv api.
 // All implementations must embed UnimplementedTaoHighStoreSrvServer
 // for forward compatibility
 type TaoHighStoreSrvServer interface {
@@ -205,7 +205,7 @@ func (UnimplementedTaoHighStoreSrvServer) BatchGet(context.Context, *BatchGetReq
 }
 func (UnimplementedTaoHighStoreSrvServer) mustEmbedUnimplementedTaoHighStoreSrvServer() {}
 
-// UnsafeTaoHighStoreSrvServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeTaoHighStoreSrvServer may be embedded to opt out of forward compatibility for this api.
 // Use of this interface is not recommended, as added methods to TaoHighStoreSrvServer will
 // result in compilation errors.
 type UnsafeTaoHighStoreSrvServer interface {
@@ -252,7 +252,7 @@ func _TaoHighStoreSrv_BatchGet_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-// TaoHighStoreSrv_ServiceDesc is the grpc.ServiceDesc for TaoHighStoreSrv service.
+// TaoHighStoreSrv_ServiceDesc is the grpc.ServiceDesc for TaoHighStoreSrv api.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TaoHighStoreSrv_ServiceDesc = grpc.ServiceDesc{
@@ -277,7 +277,7 @@ const (
 	TaoMarketDataSrv_QueryOrder_FullMethodName = "/grpc.TaoMarketDataSrv/queryOrder"
 )
 
-// TaoMarketDataSrvClient is the client API for TaoMarketDataSrv service.
+// TaoMarketDataSrvClient is the client API for TaoMarketDataSrv api.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TaoMarketDataSrvClient interface {
@@ -311,7 +311,7 @@ func (c *taoMarketDataSrvClient) QueryOrder(ctx context.Context, in *QueryReq, o
 	return out, nil
 }
 
-// TaoMarketDataSrvServer is the server API for TaoMarketDataSrv service.
+// TaoMarketDataSrvServer is the server API for TaoMarketDataSrv api.
 // All implementations must embed UnimplementedTaoMarketDataSrvServer
 // for forward compatibility
 type TaoMarketDataSrvServer interface {
@@ -332,7 +332,7 @@ func (UnimplementedTaoMarketDataSrvServer) QueryOrder(context.Context, *QueryReq
 }
 func (UnimplementedTaoMarketDataSrvServer) mustEmbedUnimplementedTaoMarketDataSrvServer() {}
 
-// UnsafeTaoMarketDataSrvServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeTaoMarketDataSrvServer may be embedded to opt out of forward compatibility for this api.
 // Use of this interface is not recommended, as added methods to TaoMarketDataSrvServer will
 // result in compilation errors.
 type UnsafeTaoMarketDataSrvServer interface {
@@ -379,7 +379,7 @@ func _TaoMarketDataSrv_QueryOrder_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-// TaoMarketDataSrv_ServiceDesc is the grpc.ServiceDesc for TaoMarketDataSrv service.
+// TaoMarketDataSrv_ServiceDesc is the grpc.ServiceDesc for TaoMarketDataSrv api.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TaoMarketDataSrv_ServiceDesc = grpc.ServiceDesc{
@@ -408,7 +408,7 @@ const (
 	TaoCoordinatorSrv_ListTaoMarket_FullMethodName     = "/grpc.TaoCoordinatorSrv/listTaoMarket"
 )
 
-// TaoCoordinatorSrvClient is the client API for TaoCoordinatorSrv service.
+// TaoCoordinatorSrvClient is the client API for TaoCoordinatorSrv api.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TaoCoordinatorSrvClient interface {
@@ -482,7 +482,7 @@ func (c *taoCoordinatorSrvClient) ListTaoMarket(ctx context.Context, in *ListTao
 	return out, nil
 }
 
-// TaoCoordinatorSrvServer is the server API for TaoCoordinatorSrv service.
+// TaoCoordinatorSrvServer is the server API for TaoCoordinatorSrv api.
 // All implementations must embed UnimplementedTaoCoordinatorSrvServer
 // for forward compatibility
 type TaoCoordinatorSrvServer interface {
@@ -519,7 +519,7 @@ func (UnimplementedTaoCoordinatorSrvServer) ListTaoMarket(context.Context, *List
 }
 func (UnimplementedTaoCoordinatorSrvServer) mustEmbedUnimplementedTaoCoordinatorSrvServer() {}
 
-// UnsafeTaoCoordinatorSrvServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeTaoCoordinatorSrvServer may be embedded to opt out of forward compatibility for this api.
 // Use of this interface is not recommended, as added methods to TaoCoordinatorSrvServer will
 // result in compilation errors.
 type UnsafeTaoCoordinatorSrvServer interface {
@@ -638,7 +638,7 @@ func _TaoCoordinatorSrv_ListTaoMarket_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-// TaoCoordinatorSrv_ServiceDesc is the grpc.ServiceDesc for TaoCoordinatorSrv service.
+// TaoCoordinatorSrv_ServiceDesc is the grpc.ServiceDesc for TaoCoordinatorSrv api.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TaoCoordinatorSrv_ServiceDesc = grpc.ServiceDesc{
@@ -678,7 +678,7 @@ const (
 	TaoAdapterSrv_DoOrderCommond_FullMethodName = "/grpc.TaoAdapterSrv/doOrderCommond"
 )
 
-// TaoAdapterSrvClient is the client API for TaoAdapterSrv service.
+// TaoAdapterSrvClient is the client API for TaoAdapterSrv api.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TaoAdapterSrvClient interface {
@@ -702,7 +702,7 @@ func (c *taoAdapterSrvClient) DoOrderCommond(ctx context.Context, in *OrderReq, 
 	return out, nil
 }
 
-// TaoAdapterSrvServer is the server API for TaoAdapterSrv service.
+// TaoAdapterSrvServer is the server API for TaoAdapterSrv api.
 // All implementations must embed UnimplementedTaoAdapterSrvServer
 // for forward compatibility
 type TaoAdapterSrvServer interface {
@@ -719,7 +719,7 @@ func (UnimplementedTaoAdapterSrvServer) DoOrderCommond(context.Context, *OrderRe
 }
 func (UnimplementedTaoAdapterSrvServer) mustEmbedUnimplementedTaoAdapterSrvServer() {}
 
-// UnsafeTaoAdapterSrvServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeTaoAdapterSrvServer may be embedded to opt out of forward compatibility for this api.
 // Use of this interface is not recommended, as added methods to TaoAdapterSrvServer will
 // result in compilation errors.
 type UnsafeTaoAdapterSrvServer interface {
@@ -748,7 +748,7 @@ func _TaoAdapterSrv_DoOrderCommond_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-// TaoAdapterSrv_ServiceDesc is the grpc.ServiceDesc for TaoAdapterSrv service.
+// TaoAdapterSrv_ServiceDesc is the grpc.ServiceDesc for TaoAdapterSrv api.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TaoAdapterSrv_ServiceDesc = grpc.ServiceDesc{

@@ -1,11 +1,12 @@
 .idea/*
+.vscode/*
 *.iml
 **/target
 **/*.json
 **/logs
 **/*.exe
-**/src/etc/generatorConfig.xml
-**/src/main/resources/application.yml
 **/**/.DS_Store
 **/tao_conf.yaml
+tao_conf.yaml
+bin/*
 **/broker_data

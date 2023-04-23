@@ -25,7 +25,7 @@ const (
 	TaoBroker_Sub_FullMethodName  = "/grpc.TaoBroker/sub"
 )
 
-// TaoBrokerClient is the client API for TaoBroker service.
+// TaoBrokerClient is the client API for TaoBroker api.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TaoBrokerClient interface {
@@ -102,7 +102,7 @@ func (x *taoBrokerSubClient) Recv() (*TaoMsgReq, error) {
 	return m, nil
 }
 
-// TaoBrokerServer is the server API for TaoBroker service.
+// TaoBrokerServer is the server API for TaoBroker api.
 // All implementations must embed UnimplementedTaoBrokerServer
 // for forward compatibility
 type TaoBrokerServer interface {
@@ -131,7 +131,7 @@ func (UnimplementedTaoBrokerServer) Sub(*TaoSubReq, TaoBroker_SubServer) error {
 }
 func (UnimplementedTaoBrokerServer) mustEmbedUnimplementedTaoBrokerServer() {}
 
-// UnsafeTaoBrokerServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeTaoBrokerServer may be embedded to opt out of forward compatibility for this api.
 // Use of this interface is not recommended, as added methods to TaoBrokerServer will
 // result in compilation errors.
 type UnsafeTaoBrokerServer interface {
@@ -217,7 +217,7 @@ func (x *taoBrokerSubServer) Send(m *TaoMsgReq) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-// TaoBroker_ServiceDesc is the grpc.ServiceDesc for TaoBroker service.
+// TaoBroker_ServiceDesc is the grpc.ServiceDesc for TaoBroker api.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TaoBroker_ServiceDesc = grpc.ServiceDesc{
