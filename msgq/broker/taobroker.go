@@ -1,4 +1,4 @@
-package broker
+package msgq
 
 import (
 	"context"

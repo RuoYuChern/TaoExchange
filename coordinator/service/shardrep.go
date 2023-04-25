@@ -2,12 +2,13 @@ package coordinator
 
 import (
 	"container/list"
-	"golang.org/x/exp/slog"
 	"sync"
+	"time"
+
+	"golang.org/x/exp/slog"
 	"tao.exchange.com/common"
 	pb "tao.exchange.com/grpc"
 	"tao.exchange.com/infra/orm"
-	"time"
 )
 
 type shardStatusInfo struct {

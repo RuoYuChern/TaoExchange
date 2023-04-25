@@ -5,8 +5,9 @@ import (
 	"context"
 	"net/http"
 	"sync"
-	"tao.exchange.com/facade"
 	"time"
+
+	"tao.exchange.com/facade"
 
 	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"

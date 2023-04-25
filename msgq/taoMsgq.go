@@ -1,7 +1,7 @@
 package main
 
-import "broker"
+import "tao.exchange.com/msgq"
 
 func main() {
-	broker.StartBroker()
+	msgq.StartBroker()
 }

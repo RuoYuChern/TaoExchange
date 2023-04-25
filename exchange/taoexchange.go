@@ -2,16 +2,17 @@ package main
 
 import (
 	"context"
-	"exchange"
 	"fmt"
-	"golang.org/x/exp/slog"
-	"google.golang.org/grpc"
 	"net"
 	"os/signal"
 	"syscall"
-	"tao.exchange.com/common"
-	pb "tao.exchange.com/grpc"
 	"time"
+
+	"golang.org/x/exp/slog"
+	"google.golang.org/grpc"
+	"tao.exchange.com/common"
+	exchange "tao.exchange.com/exchange/service"
+	pb "tao.exchange.com/grpc"
 )
 
 func main() {

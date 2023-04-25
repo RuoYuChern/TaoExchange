@@ -3,16 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
-	"golang.org/x/exp/slog"
-	"google.golang.org/grpc"
 	"net"
 	"os/signal"
 	"syscall"
+	"time"
+
+	"golang.org/x/exp/slog"
+	"google.golang.org/grpc"
 	"tao.exchange.com/common"
-	"tao.exchange.com/coordinator"
+	coordinator "tao.exchange.com/coordinator/service"
 	pb "tao.exchange.com/grpc"
 	"tao.exchange.com/infra"
-	"time"
 )
 
 func main() {
@@ -27,7 +28,6 @@ func main() {
 	if err != nil {
 		slog.Error("db connect:", err.Error())
 		panic(err)
-		return
 	}
 	// load lock info
 	coordinator.GetSs().Int()
